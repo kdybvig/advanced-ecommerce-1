@@ -2,13 +2,70 @@ import React, {Component} from 'react';
 import Header from './Header';
 import '../App.css';
 import Footer from './Footer';
-import ProductDetail from './ProductDetail'
+import ProductDetail from './ProductDetail';
+import Cart from './Cart';
+import Carousel from './Carousel';
+import Checkout from './Checkout';
 
 class App extends Component {
+    state = {
+        products: [],
+        cart: [],
+        orderStatus: 0
+    }
+
+    addToCart = (id, name, price) => {
+        const curCart = this.state.cart;
+        const idIdx = curCart.findIndex(item => item.id === id);
+        if (idIdx === -1) {
+            curCart.push({id: id, name: name, price: price, quantity: 1});
+        } else {
+            curCart[idIdx].quantity ++;
+            curCart[idIdx].price += price;
+        }
+
+        console.log(curCart);
+
+        this.setState({
+            cart: curCart,
+            orderStatus: 1
+        });
+    }
+
+    sendOrder = (order) => {
+        fetch("http://localhost:3001/orders/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(order)
+        })
+        .then(res => res.json())
+        .then(json => {
+            console.log(json);
+            this.setState({
+                orderStatus: 2,
+                cart: []
+            })
+        });
+    }
+
+    componentDidMount () {
+        fetch('http://localhost:3001/products/')
+        .then(res => res.json())
+        .then(json => {
+            this.setState({
+                products: json
+            })
+        })
+    }
     render() {
+        console.log('status', this.state.orderStatus)
+        const itemsInCart = this.state.cart.reduce((acc, item) => acc + item.quantity, 0);
+
         return (
             <div className="App">
-              <Header />
+              <Header cartItems={itemsInCart}/>
           <div className="container">
       
               <div className="row">
@@ -24,41 +81,12 @@ class App extends Component {
       
                   <div className="col-md-9">
                       {/*<Carousel>*/}
-                      <div className="row carousel-holder">
-      
-                          <div className="col-md-12">
-                              <div id="carousel-example-generic" className="carousel slide" data-ride="carousel">
-                                  <ol className="carousel-indicators">
-                                      <li data-target="#carousel-example-generic" data-slide-to="0" className="active"></li>
-                                      <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                                      <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-                                  </ol>
-                                  <div className="carousel-inner">
-                                      <div className="item active">
-                                          <img className="slide-image" src="http://placehold.it/800x300" alt=""/>
-                                      </div>
-                                      <div className="item">
-                                          <img className="slide-image" src="http://placehold.it/800x300" alt=""/>
-                                      </div>
-                                      <div className="item">
-                                          <img className="slide-image" src="http://placehold.it/800x300" alt=""/>
-                                      </div>
-                                  </div>
-                                  <a className="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                                      <span className="glyphicon glyphicon-chevron-left"></span>
-                                  </a>
-                                  <a className="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                                      <span className="glyphicon glyphicon-chevron-right"></span>
-                                  </a>
-                              </div>
-                          </div>
-      
-                      </div>
+                      <Carousel />
                       {/*</Carousel>*/}
                       <div className="row">
                           {/*<ProductDetail>*/}
-                         {this.props.products.map(product => {
-                             return <ProductDetail product={product} />
+                         {this.state.products.map((product, index) => {
+                             return <ProductDetail product={product} key={index} handleClick={this.addToCart}/>
                          })}
                           {/*</ProductDetail>*/}
       {/*
@@ -70,7 +98,11 @@ class App extends Component {
                           </div>
       */}
                       </div>
-      
+                    <Cart cart={this.state.cart}/>
+                    <br />
+                    <hr />
+                    <br />
+                    <Checkout cart={this.state.cart} sendOrder={this.sendOrder} orderStatus={this.state.orderStatus}/>
                   </div>
       
               </div>

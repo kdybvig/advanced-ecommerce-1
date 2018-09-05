@@ -1,14 +1,15 @@
 import React from 'react';
 
 const ProductDetail = props => {
-    const {price, name, description, reviews, rating} = props.product;
+    const {_id, price, name, description, reviews, rating} = props.product;
     const starsJSX = [];
     for (let i=0; i< 5; i++) {
         if(i< rating) {
-            starsJSX.push(<span className="glyphicon glyphicon-star"></span>)
-        } else starsJSX.push(<span className="glyphicon glyphicon-star-empty"></span>)
+            starsJSX.push(<span key={i} className="glyphicon glyphicon-star"></span>)
+        } else starsJSX.push(<span key={i} className="glyphicon glyphicon-star-empty"></span>)
 
     }
+    const priceFloat = parseFloat((price).slice(1))
     return (
         <div className="col-sm-4 col-lg-4 col-md-4">
                         <div className="thumbnail">
@@ -25,6 +26,7 @@ const ProductDetail = props => {
                                     {starsJSX}
                                 </p>
                             </div>
+                            <button onClick={()=> props.handleClick(_id, name, priceFloat)}>Add To Cart</button>
                         </div>
                     </div>
 

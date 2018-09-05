@@ -22,3 +22,20 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0px 20px;
+}
+
+form {
+  text-align: left;
+}
+
+.bold {
+  font-weight: bold;
+}
