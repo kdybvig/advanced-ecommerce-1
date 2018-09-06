@@ -21,7 +21,8 @@ class App extends Component {
             curCart.push({id: id, name: name, price: price, quantity: 1});
         } else {
             curCart[idIdx].quantity ++;
-            curCart[idIdx].price += price;
+            curCart[idIdx].price = Math.round((price + curCart[idIdx].price)*100)/100;
+
         }
 
         console.log(curCart);

@@ -9,7 +9,7 @@ const ProductDetail = props => {
         } else starsJSX.push(<span key={i} className="glyphicon glyphicon-star-empty"></span>)
 
     }
-    const priceFloat = parseFloat((price).slice(1))
+    const priceFloat = Math.round(parseFloat((price).slice(1))*100)/100
     return (
         <div className="col-sm-4 col-lg-4 col-md-4">
                         <div className="thumbnail">
